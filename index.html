@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        body{
+            background-color: #9EBD6E;
+        }
+        input[type=text] {
+  width: 60%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  box-sizing: border-box;
+}
+button{
+    height: 45px;
+    font-weight: bold;
+}
+        .wrapper, .search{
+            
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+        }
+        
+                .container{
+                width: 100%;
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: space-between;
+                
+            
+        }
+        img{
+            padding: 5px;
+            flex: 1 1 50px;
+            
+            
+        }
+       .search{
+           height: 60px;
+       }
+       .title{
+           text-align: center;
+       }
+       .loadmore{
+           text-align: center;
+           margin-top: 10px;
+           width: 40%;
+                max-width: 500px;
+            background: none;
+       }
+    </style>
+</head>
+<body>
+
+    <div class="warpper">
+
+        <div class="search">
+            <input type="text" class="searchbox">
+            <button class="searchbutton">Search</button>
+        </div>
+        <h1 class="title">Trending Gifs</h1>
+    <div class="container">
+            
+    </div>
+    <div class="search">
+    <button class="loadmore">Load More</button>
+</div>
+</div>
+
+</body>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
+<script>
+    $(document).ready(function(){
+        let giphy_url = "https://api.giphy.com/v1/gifs/trending";
+        let api = "UQaXN0CsmE0mswnmjOcSZSC471t29DWR";
+        var i;
+        $.getJSON(giphy_url+"?api_key="+api+"&limit=20", function(data){
+            
+             for(i = 0; i < data.pagination.count; i++){
+
+                $('.container').append("<img height='200px' src="+data.data[i].images.original.url+">");
+            }
+
+        });
+        
+
+                $('.searchbutton').on('click', function(){
+
+                        if($('.searchbox').val() != ""){
+                                var searchkey = $('.searchbox').val();
+                            $('img').remove();
+                            $('h1').text("Showing Result for: "+searchkey);
+
+                            $.getJSON(giphy_url+"?api_key="+api+"&limit=20&q="+searchkey, function(data){
+            for(i = 0; i < data.pagination.count; i++){
+
+               $('.container').append("<img height='200px' src="+data.data[i].images.original.url+">");
+           }
+
+       });
+                        }
+
+
+                });
+
+
+                $('.loadmore').on('click',function(){
+                let j = i + 1;
+
+                if($('.searchbox').val() != ""){
+                    $.getJSON(giphy_url+"?api_key="+api+"&limit=20&q="+$('.searchbox').val(), function(data){
+                        for(i = 0; i < data.pagination.count; i++){                        
+                    $('.container').append("<img height='200px' src="+data.data[i].images.original.url+">");
+                    }        
+                    i = j + i;    
+                });
+                }
+                $.getJSON(giphy_url+"?api_key="+api+"&offset="+j+"&limit=10", function(data){
+                        for(i = 0; i < data.pagination.count; i++){
+                        
+                    $('.container').append("<img height='200px' src="+data.data[i].images.original.url+">");
+                    }        
+                    i = j + i;    
+                });
+            });
+    });
+</script>
+</html>
